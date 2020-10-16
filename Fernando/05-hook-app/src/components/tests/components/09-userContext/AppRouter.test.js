@@ -1,0 +1,23 @@
+import React from 'react';
+import { mount, shallow } from 'enzyme';
+import { AppRouter } from '../../../09-useContext/AppRouter';
+import { UserContext } from '../../../09-useContext/UserContext';
+
+describe('Pruebas en <AppRouter/>', () => {
+    
+    const user = {
+        id: 1,
+        name: 'Fernando',
+    };
+
+    const wrapper = mount(
+        <UserContext.Provider value = {{ user }}>
+            <AppRouter/> 
+        </UserContext.Provider>
+    );
+
+    test('debe de mostrarse correctamente', () => {
+        expect( wrapper ).toMatchSnapshot();
+    })
+    
+})
