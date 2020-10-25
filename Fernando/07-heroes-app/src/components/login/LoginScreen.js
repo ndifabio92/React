@@ -1,16 +1,15 @@
-import React, { useContext } from 'react'
-import { AuthContext } from '../auth/AuthContext';
-import { types } from '../types/types';
+import React, { useContext } from 'react';
+import { AuthContext } from '../../auth/AuthContext';
+import { types } from '../../types/types';
 
 export const LoginScreen = ({ history }) => {
 
     const { dispatch } = useContext( AuthContext );
 
     const handleLogin = () => {
-        // history.push('/');
-        // history.replace('/');
 
-        const lastPath = localStorage.getItem('lastPath') || '/'
+        const lastPath = localStorage.getItem('lastPath') || '/';
+
         dispatch({
             type: types.login,
             payload: {
@@ -19,14 +18,21 @@ export const LoginScreen = ({ history }) => {
         });
 
         history.replace( lastPath );
-    };
+        
+    }
 
     return (
-        <div className = "container mt-5">
+        <div className="container mt-5">
             <h1>Login</h1>
-            <hr/>
+            <hr />
 
-            <button className = "btn btn-primary" onClick = { handleLogin }> Login </button>
+            <button
+                className="btn btn-primary"
+                onClick={ handleLogin }
+            >
+                Login
+            </button>
+
         </div>
     )
 }
