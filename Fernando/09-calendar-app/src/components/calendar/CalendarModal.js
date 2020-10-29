@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import DateTimePicker from 'react-datetime-picker';
 import moment from 'moment';
+import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+import { uiCloseModal } from '../../actions/ui';
 
 const customStyles = {
     content : {
@@ -21,8 +24,13 @@ const nowPlusOne = now.clone().add( 1, 'hours' );
 
 export const CalendarModal = () => {
     
+    const dispatch = useDispatch();
+    
+    const { modalOpen } = useSelector(state => state.ui );
+
     const [ dateStart, setDateStart ] = useState( now.toDate() );
     const [ dateEnd, setDateEnd ] = useState( nowPlusOne.toDate() );
+    const [ titleValid, setTitleValid ] = useState( true )
 
     const [ formValues, setFormValues ] = useState({
         title: 'Evento',
@@ -31,7 +39,7 @@ export const CalendarModal = () => {
         end: nowPlusOne.toDate()
     });
 
-    const { notes, title } = formValues;
+    const { notes, title, start, end } = formValues;
 
     const handleInputChange = ({ target }) => {
 
@@ -58,18 +66,30 @@ export const CalendarModal = () => {
     };
 
     const closeModal = () => {
-        
+        // TODO: Cerrar el modal
+        dispatch( uiCloseModal() );
     };
 
     const handleSubmitForm = e => {
         e.preventDefault();
-        console.log( formValues );
+        const momentStart = moment( start );
+        const momentEnd = moment( end );
+
+        if( momentStart.isSameOrAfter( momentEnd )) {
+            return Swal.fire('Error','La fecha fin debe de ser mayor a la fecha de inicio','error');
+        }
+
+        if( title.trim().length < 2) {
+            return setTitleValid( false );
+        }
+
+        setTitleValid( true );
+        closeModal();
     }
 
     return (
         <Modal 
-            isOpen = { true }
-            // onAfterOpen = { afterOpenModal }
+            isOpen = { modalOpen }
             onRequestClose = { closeModal }
             style = { customStyles }
             closeTimeoutMS = { 200 }
@@ -104,7 +124,7 @@ export const CalendarModal = () => {
                     <label>Titulo y notas</label>
                     <input 
                         type="text" 
-                        className="form-control"
+                        className={ `form-control ${ !titleValid && 'is-invalid'}` }
                         placeholder="Título del evento"
                         name="title"
                         value = { title }
