@@ -5,28 +5,23 @@ import { Navbar } from '../ui/Navbar';
 import { messages } from '../../helpers/calendar-messages-es';
 import { CalendarEvent } from './CalendarEvent';
 import { CalendarModal } from './CalendarModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { uiOpenModal } from '../../actions/ui';
+import { eventClearActiveEvent, eventSetActive } from '../../actions/events';
+import { AddNewFab } from '../ui/AddNewFab';
+import { DeleteEventFab } from '../ui/DeleteEventFab';
 import 'moment/locale/es';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 moment.locale('es');
 const localizer = momentLocalizer( moment ); // or globalizeLocalizer
 
-const events = [{
-    title: 'Cumple del jefe',
-    start: moment().toDate(),
-    end: moment().add( 2, 'hours').toDate(),
-    bgcolor: '#fafafa',
-    user: {
-        _id: '1234',
-        name: 'Fernando'
-    }
-}];
-
 export const CalendarScreen = () => {
 
     const dispatch = useDispatch();
+    // TODO: Leer eventos
+    const { events, activeEvent } = useSelector( state => state.calendar );
+
     const [ lasview, setLasview ] = useState(
         localStorage.getItem('lastView') || 'month'
     )
@@ -36,12 +31,16 @@ export const CalendarScreen = () => {
     }
 
     const onSelectEvent = e => {
-        
+        dispatch( eventSetActive(e) );
     }
 
     const onViewChange = e => {
         setLasview(e);
         localStorage.setItem('lastView', e );
+    }
+
+    const onSelectSlot = e => {
+        dispatch( eventClearActiveEvent() );
     }
 
     const eventStyleGetter = ( event, start, end, isSelected ) => {
@@ -72,9 +71,17 @@ export const CalendarScreen = () => {
                 components = {{ event: CalendarEvent }}
                 onDoubleClickEvent = { onDoubleClick }
                 onSelectEvent = { onSelectEvent }
+                onSelectSlot = { onSelectSlot }
+                selectable = { true }
                 onView = { onViewChange }
                 view = { lasview }
             />
+
+            <AddNewFab />
+
+            {
+                ( activeEvent ) && <DeleteEventFab /> 
+            }
 
             <CalendarModal />
         </div>
