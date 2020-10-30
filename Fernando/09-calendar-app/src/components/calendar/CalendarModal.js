@@ -35,7 +35,7 @@ export const CalendarModal = () => {
     const dispatch = useDispatch();
 
     const { activeEvent } = useSelector( state => state.calendar );
-    const { modalOpen } = useSelector(state => state.ui );
+    const { modalOpen } = useSelector( state => state.ui );
     
     const [ dateStart, setDateStart ] = useState( now.toDate() );
     const [ dateEnd, setDateEnd ] = useState( nowPlusOne.toDate() );
@@ -45,7 +45,6 @@ export const CalendarModal = () => {
     const { notes, title, start, end } = formValues;
 
     useEffect(() => {
-        // if( activeEvent ) setFormValues( activeEvent );
         ( activeEvent ) ? setFormValues( activeEvent ) : setFormValues( initEvent );
 
     }, [ activeEvent, setFormValues ]);
